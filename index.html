@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AgroSmart - Programa Agrinho 2026. Ferramentas inteligentes para produtores rurais: previsão do tempo, irrigação, rotação de culturas e sustentabilidade." />
+  <title>AgroSmart — Programa Agrinho 2026</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ======================================================
+       NAVBAR
+  ====================================================== -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <button class="nav-logo" onclick="scrollTo('#home')">
+        <div class="nav-logo-icon">🌿</div>
+        <div class="nav-logo-text">
+          <span class="nav-logo-name">AgroSmart</span>
+          <span class="nav-logo-sub">Agrinho 2026</span>
+        </div>
+      </button>
+
+      <div class="nav-links" id="navLinks">
+        <button onclick="scrollTo('#home')">Início</button>
+        <button onclick="scrollTo('#weather')">Clima</button>
+        <button onclick="scrollTo('#water')">Água</button>
+        <button onclick="scrollTo('#rotation')">Rotação</button>
+        <button onclick="scrollTo('#cultures')">Culturas</button>
+        <button onclick="scrollTo('#sustainability')">Sustentabilidade</button>
+        <button onclick="scrollTo('#contact')">Contato</button>
+      </div>
+
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ======================================================
+       HERO
+  ====================================================== -->
+  <section id="home" class="hero">
+    <div class="hero-bg">
+      <img src="img/hero.jpg" alt="Paisagem agrícola brasileira" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <span class="badge badge-white">🌱 Programa Agrinho 2026</span>
+      <h1 class="hero-title">Tecnologia e<br><span class="text-green-light">Sustentabilidade</span><br>no Campo</h1>
+      <p class="hero-desc">Ferramentas inteligentes para o produtor rural brasileiro: previsão do tempo, gestão de água, rotação de culturas e muito mais — tudo em um só lugar.</p>
+      <div class="hero-buttons">
+        <button class="btn btn-white" onclick="scrollTo('#weather')">Explorar Ferramentas</button>
+        <button class="btn btn-outline" onclick="scrollTo('#sustainability')">Saiba Mais</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><span>☀️</span><p>Clima em<br>Tempo Real</p></div>
+        <div class="hero-stat"><span>💧</span><p>Economia<br>de Água</p></div>
+        <div class="hero-stat"><span>🌾</span><p>Culturas<br>Inteligentes</p></div>
+      </div>
+    </div>
+    <button class="scroll-indicator" onclick="scrollTo('#weather')">↓</button>
+  </section>
+
+  <!-- ======================================================
+       PREVISÃO DO TEMPO
+  ====================================================== -->
+  <section id="weather" class="section section-light">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge badge-green">☁️ Previsão do Tempo</span>
+        <h2>Clima em <span class="text-green">Tempo Real</span></h2>
+        <p>Consulte as condições climáticas da sua região para planejar melhor o plantio e a colheita.</p>
+      </div>
+
+      <div class="weather-search">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="cityInput" aria-label="Buscar cidade para previsão do tempo" placeholder="Digite o nome da cidade..." onkeydown="if(event.key==='Enter') fetchWeather()" />
+        </div>
+        <button class="btn btn-primary" onclick="fetchWeather()">Buscar</button>
+        <button id="gpsBtn" class="btn btn-gps" onclick="fetchByGPS()" title="Usar minha localização">📍</button>
+      </div>
+      <p id="weatherError" class="error-msg" style="display:none"></p>
+
+      <div id="weatherResult" class="weather-card" style="display:none">
+        <div class="weather-header">
+          <div>
+            <h3 id="weatherCity"></h3>
+            <p id="weatherDesc"></p>
+          </div>
+          <div class="weather-temp-box">
+            <span id="weatherIcon" class="weather-icon-big"></span>
+            <span id="weatherTemp" class="weather-temp"></span>
+          </div>
+        </div>
+        <div class="weather-details">
+          <div class="weather-detail">
+            <span>🌡️</span>
+            <p>Sensação</p>
+            <strong id="weatherFeels"></strong>
+          </div>
+          <div class="weather-detail">
+            <span>💧</span>
+            <p>Umidade</p>
+            <strong id="weatherHumidity"></strong>
+          </div>
+          <div class="weather-detail">
+            <span>💨</span>
+            <p>Vento</p>
+            <strong id="weatherWind"></strong>
+          </div>
+          <div class="weather-detail">
+            <span>👁️</span>
+            <p>Visibilidade</p>
+            <strong id="weatherVis"></strong>
+          </div>
+        </div>
+        <div class="weather-tip">
+          <p id="weatherTip"></p>
+        </div>
+      </div>
+
+      <div id="weatherQuick" class="quick-cities">
+        <p>Selecione uma região:</p>
+        <div class="region-tabs">
+          <button class="region-tab active" onclick="showRegion('Norte',this)">Norte</button>
+          <button class="region-tab" onclick="showRegion('Nordeste',this)">Nordeste</button>
+          <button class="region-tab" onclick="showRegion('Centro-Oeste',this)">Centro-Oeste</button>
+          <button class="region-tab" onclick="showRegion('Sudeste',this)">Sudeste</button>
+          <button class="region-tab" onclick="showRegion('Sul',this)">Sul</button>
+        </div>
+        <div id="regionCities" class="city-pills">
+          <button onclick="quickCity('Rio Branco')">Rio Branco</button>
+          <button onclick="quickCity('Manaus')">Manaus</button>
+          <button onclick="quickCity('Belém')">Belém</button>
+          <button onclick="quickCity('Porto Velho')">Porto Velho</button>
+          <button onclick="quickCity('Boa Vista')">Boa Vista</button>
+          <button onclick="quickCity('Macapá')">Macapá</button>
+          <button onclick="quickCity('Palmas')">Palmas</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       CONSUMO DE ÁGUA
+  ====================================================== -->
+  <section id="water" class="section section-white">
+    <div class="container">
+      <div class="split-layout">
+        <div class="split-left fade-in-left">
+          <span class="badge badge-blue">💧 Consumo de Água</span>
+          <h2>Economize <span class="text-green">Água</span> na Irrigação</h2>
+          <p class="section-desc">Calcule a quantidade ideal de água para sua lavoura e reduza o desperdício. Uma irrigação eficiente pode economizar até 40% dos recursos hídricos.</p>
+          <div class="water-image">
+            <img src="img/water.jpg" alt="Irrigação de hortaliças" />
+          </div>
+          <div class="info-cards">
+            <div class="info-card">
+              <span>📉</span>
+              <div><strong>40% Menos</strong><p>Economia com gotejamento</p></div>
+            </div>
+            <div class="info-card">
+              <span>🌿</span>
+              <div><strong>Solo Saudável</strong><p>Irrigação consciente</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="split-right fade-in-right">
+          <div class="calc-card">
+            <div class="calc-header">
+              <div class="calc-icon">🧮</div>
+              <div>
+                <h3>Calculadora de Irrigação</h3>
+                <p>Estime sua necessidade hídrica</p>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Tipo de Cultura</label>
+              <select id="cropSelect">
+                <option value="">Selecione a cultura</option>
+                <option value="milho">Milho</option>
+                <option value="soja">Soja</option>
+                <option value="arroz">Arroz</option>
+                <option value="feijao">Feijão</option>
+                <option value="cafe">Café</option>
+                <option value="cana">Cana-de-açúcar</option>
+                <option value="hortalicas">Hortaliças</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Área (hectares)</label>
+              <input type="number" id="areaInput" placeholder="Ex: 10" min="0" step="0.1" />
+            </div>
+            <button class="btn btn-primary btn-full" onclick="calculateWater()">🧮 Calcular Necessidade</button>
+            <div id="waterResult" class="water-result" style="display:none">
+              <div class="result-grid">
+                <div class="result-box result-blue">
+                  <p>Diário</p>
+                  <strong id="dailyWater"></strong>
+                </div>
+                <div class="result-box result-green">
+                  <p>Mensal</p>
+                  <strong id="monthlyWater"></strong>
+                </div>
+              </div>
+              <div class="result-tip">
+                <p id="waterTip"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       ROTAÇÃO DE CULTURAS
+  ====================================================== -->
+  <section id="rotation" class="section section-light">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge badge-brown">♻️ Rotação de Culturas</span>
+        <h2>Planeje sua <span class="text-green">Rotação</span></h2>
+        <p>A rotação de culturas é essencial para manter a saúde do solo, controlar pragas e garantir produtividade a longo prazo.</p>
+      </div>
+
+      <div class="split-layout">
+        <div class="split-left">
+          <div class="rotation-image">
+            <img src="img/rotation.jpg" alt="Campos de rotação de culturas" />
+          </div>
+          <div class="form-group">
+            <label>Selecione sua cultura principal</label>
+            <select id="rotationSelect" onchange="showRotation()">
+              <option value="">Escolha uma cultura</option>
+              <option value="milho">Milho</option>
+              <option value="soja">Soja</option>
+              <option value="cafe">Café</option>
+              <option value="hortalicas">Hortaliças</option>
+            </select>
+          </div>
+          <div class="general-tips">
+            <div class="tip-item"><span>›</span><p>Alterne famílias botânicas diferentes a cada safra</p></div>
+            <div class="tip-item"><span>›</span><p>Inclua uma leguminosa para fixar nitrogênio</p></div>
+            <div class="tip-item"><span>›</span><p>Use plantas de cobertura na entressafra</p></div>
+          </div>
+        </div>
+
+        <div class="split-right">
+          <div id="rotationResult" class="rotation-card" style="display:none">
+            <h3 id="rotationTitle"></h3>
+            <p id="rotationPeriod" class="rotation-period"></p>
+            <div id="rotationSequence" class="rotation-sequence"></div>
+            <h4>Benefícios desta rotação:</h4>
+            <div id="rotationBenefits" class="rotation-benefits"></div>
+          </div>
+          <div id="rotationPlaceholder" class="rotation-placeholder">
+            <span>♻️</span>
+            <p>Selecione uma cultura para ver<br>a sugestão de rotação</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       CULTURAS INDICADAS
+  ====================================================== -->
+  <section id="cultures" class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge badge-green">🌱 Culturas Indicadas</span>
+        <h2>O que <span class="text-green">Plantar</span>?</h2>
+        <p>Conheça as principais culturas brasileiras, seus requisitos climáticos e as melhores épocas para plantio em cada região.</p>
+      </div>
+
+      <div class="cultures-grid">
+        <div class="culture-card">
+          <div class="culture-img"><img src="img/cafe.jpg" alt="Café" /></div>
+          <div class="culture-overlay">
+            <h3>Café</h3>
+            <p>Cultura de grande valor econômico, ideal para regiões de altitude com clima ameno.</p>
+            <div class="culture-info">
+              <span>📍 Sudeste e Sul</span>
+              <span>🌡️ 18°C a 23°C</span>
+              <span>💧 Moderada</span>
+              <span>📅 Colheita mai/set</span>
+            </div>
+          </div>
+        </div>
+        <div class="culture-card">
+          <div class="culture-img"><img src="img/milho.jpg" alt="Milho" /></div>
+          <div class="culture-overlay">
+            <h3>Milho</h3>
+            <p>Base da alimentação animal e humana, adaptável a diversas regiões do país.</p>
+            <div class="culture-info">
+              <span>📍 Todo o Brasil</span>
+              <span>🌡️ 20°C a 30°C</span>
+              <span>💧 Média a Alta</span>
+              <span>📅 Safra: out/mar</span>
+            </div>
+          </div>
+        </div>
+        <div class="culture-card">
+          <div class="culture-img"><img src="img/soja.jpg" alt="Soja" /></div>
+          <div class="culture-overlay">
+            <h3>Soja</h3>
+            <p>Principal commodity brasileira, fixa nitrogênio no solo beneficiando a rotação.</p>
+            <div class="culture-info">
+              <span>📍 Centro-Oeste, Sul</span>
+              <span>🌡️ 20°C a 30°C</span>
+              <span>💧 Média</span>
+              <span>📅 Safra: set/fev</span>
+            </div>
+          </div>
+        </div>
+        <div class="culture-card">
+          <div class="culture-img"><img src="img/cana.jpg" alt="Cana-de-açúcar" /></div>
+          <div class="culture-overlay">
+            <h3>Cana-de-açúcar</h3>
+            <p>Utilizada para produção de açúcar, etanol e energia, ciclo de 12 a 18 meses.</p>
+            <div class="culture-info">
+              <span>📍 Sudeste e Nordeste</span>
+              <span>🌡️ 22°C a 30°C</span>
+              <span>💧 Alta</span>
+              <span>📅 Colheita: abr/nov</span>
+            </div>
+          </div>
+        </div>
+        <div class="culture-card">
+          <div class="culture-img"><img src="img/arroz.jpg" alt="Arroz" /></div>
+          <div class="culture-overlay">
+            <h3>Arroz</h3>
+            <p>Alimento básico dos brasileiros, cultivado em sistema irrigado ou de sequeiro.</p>
+            <div class="culture-info">
+              <span>📍 Sul e Centro-Oeste</span>
+              <span>🌡️ 20°C a 35°C</span>
+              <span>💧 Muito Alta</span>
+              <span>📅 Safra: out/abr</span>
+            </div>
+          </div>
+        </div>
+        <div class="culture-card">
+          <div class="culture-img"><img src="img/mandioca.jpg" alt="Mandioca" /></div>
+          <div class="culture-overlay">
+            <h3>Mandioca</h3>
+            <p>Cultura rústica e versátil, fundamental para a agricultura familiar brasileira.</p>
+            <div class="culture-info">
+              <span>📍 Todo o Brasil</span>
+              <span>🌡️ 20°C a 27°C</span>
+              <span>💧 Baixa a Média</span>
+              <span>📅 Plantio o ano todo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       SUSTENTABILIDADE
+  ====================================================== -->
+  <section id="sustainability" class="section section-green-light">
+    <div class="container">
+      <div class="sustain-hero">
+        <img src="img/sustainability.jpg" alt="Agricultura sustentável" />
+        <div class="sustain-hero-content">
+          <span class="badge badge-white">🌿 Sustentabilidade</span>
+          <h2>Produzir sem Destruir</h2>
+          <p>Práticas sustentáveis que preservam o meio ambiente e aumentam a produtividade da sua propriedade.</p>
+        </div>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card fade-in"><div class="tip-card-icon">🌳</div><h3>Preservação de Matas</h3><p>Mantenha a vegetação nativa nas margens dos rios conforme o Código Florestal.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">♻️</div><h3>Compostagem</h3><p>Transforme resíduos orgânicos em adubo natural, reduzindo custos e melhorando o solo.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">🌧️</div><h3>Captação de Chuva</h3><p>Instale cisternas para coletar água da chuva e usar na irrigação e dessedentação animal.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">🐛</div><h3>Controle Biológico</h3><p>Utilize predadores naturais para controlar pragas, reduzindo o uso de agrotóxicos.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">🌱</div><h3>Plantio Direto</h3><p>Plante sem revolver o solo, mantendo a cobertura vegetal e reduzindo a erosão.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">⛰️</div><h3>Curvas de Nível</h3><p>Construa terraços para conter a erosão e preservar a fertilidade do solo.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">🛡️</div><h3>Uso Consciente de Insumos</h3><p>Aplique fertilizantes e defensivos na dose correta com análise do solo.</p></div>
+        <div class="tip-card fade-in"><div class="tip-card-icon">⚡</div><h3>Energia Renovável</h3><p>Invista em energia solar ou biodigestores para reduzir custos e pegada de carbono.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       CONTATO
+  ====================================================== -->
+  <section id="contact" class="section section-white">
+    <div class="container">
+      <div class="section-header">
+        <span class="badge badge-green">✉️ Contato</span>
+        <h2>Fale <span class="text-green">Conosco</span></h2>
+        <p>Tem dúvidas, sugestões ou quer participar do Programa Agrinho 2026? Entre em contato com nossa equipe.</p>
+      </div>
+
+      <div class="contact-layout">
+        <div class="contact-info">
+          <div class="contact-card">
+            <span>📧</span>
+            <div>
+              <strong>E-mail</strong>
+              <p>contato@agrosmart.edu.br</p>
+              <small>Respondemos em até 48 horas</small>
+            </div>
+          </div>
+          <div class="contact-card">
+            <span>📞</span>
+            <div>
+              <strong>Telefone</strong>
+              <p>(41) 3200-0000</p>
+              <small>Segunda a sexta, 8h às 17h</small>
+            </div>
+          </div>
+          <div class="contact-card">
+            <span>📍</span>
+            <div>
+              <strong>Endereço</strong>
+              <p>Programa Agrinho — SENAR-PR</p>
+              <small>Curitiba, Paraná, Brasil</small>
+            </div>
+          </div>
+          <div class="contact-project">
+            <h4>🌿 Sobre o Projeto</h4>
+            <p>O AgroSmart é uma iniciativa do Programa Agrinho 2026, desenvolvido para levar tecnologia e conhecimento ao produtor rural brasileiro, promovendo sustentabilidade e eficiência no campo.</p>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap">
+          <p id="formError" class="error-msg" style="display:none;margin-bottom:12px"></p>
+          <form id="contactForm" onsubmit="submitForm(event)" class="contact-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="contactName" placeholder="Seu nome" required />
+              </div>
+              <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="contactEmail" placeholder="seu@email.com" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Assunto</label>
+              <input type="text" id="contactSubject" placeholder="Sobre o que deseja falar?" required />
+            </div>
+            <div class="form-group">
+              <label>Mensagem</label>
+              <textarea id="contactMessage" placeholder="Escreva sua mensagem..." rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">✉️ Enviar Mensagem</button>
+          </form>
+          <div id="formSuccess" class="form-success" style="display:none">
+            <span>✅</span>
+            <h3>Mensagem Enviada!</h3>
+            <p>Obrigado pelo contato. Responderemos o mais breve possível.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================
+       FOOTER
+  ====================================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span>🌿</span>
+            <div>
+              <strong>AgroSmart</strong>
+              <small>Agrinho 2026</small>
+            </div>
+          </div>
+          <p>Ferramentas inteligentes para o produtor rural brasileiro. Tecnologia, sustentabilidade e conhecimento ao alcance do campo.</p>
+        </div>
+        <div class="footer-nav">
+          <h4>Navegação</h4>
+          <div class="footer-links">
+            <button onclick="scrollTo('#home')">Início</button>
+            <button onclick="scrollTo('#weather')">Clima</button>
+            <button onclick="scrollTo('#water')">Água</button>
+            <button onclick="scrollTo('#rotation')">Rotação</button>
+            <button onclick="scrollTo('#cultures')">Culturas</button>
+            <button onclick="scrollTo('#sustainability')">Sustentabilidade</button>
+            <button onclick="scrollTo('#contact')">Contato</button>
+          </div>
+        </div>
+        <div class="footer-info">
+          <h4>Programa Agrinho</h4>
+          <p>Uma iniciativa que transforma a educação e a tecnologia no campo, formando produtores rurais mais preparados e conscientes.</p>
+          <small>Projeto educacional — Agrinho 2026</small>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 AgroSmart — Programa Agrinho. Todos os direitos reservados.</p>
+        <p>Feito com ❤️ para o campo brasileiro</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
